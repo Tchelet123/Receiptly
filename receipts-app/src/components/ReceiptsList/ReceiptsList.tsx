@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import type { ChangeEvent } from "react";
 import type { Receipt } from "../../types";
 import {
     loadReceipts,
@@ -11,7 +12,18 @@ interface ReceiptsListProps {
     refreshKey: number;
 }
 
-export default function ReceiptsList({ onEdit, refreshKey }: ReceiptsListProps) {
+function formatDateDDMMYYYY(dateStr: string) {
+    if (!dateStr) return "";
+    const parts = dateStr.split("-");
+    if (parts.length !== 3) return dateStr;
+    const [year, month, day] = parts;
+    return `${day.padStart(2, "0")}/${month.padStart(2, "0")}/${year}`;
+}
+
+export default function ReceiptsList({
+                                         onEdit,
+                                         refreshKey,
+                                     }: ReceiptsListProps) {
     const [receipts, setReceipts] = useState<Receipt[]>([]);
     const [search, setSearch] = useState("");
     const [dateFrom, setDateFrom] = useState("");
@@ -37,12 +49,14 @@ export default function ReceiptsList({ onEdit, refreshKey }: ReceiptsListProps) 
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `receipts-backup-${new Date().toISOString().slice(0, 10)}.json`;
+        a.download = `receipts-backup-${new Date()
+            .toISOString()
+            .slice(0, 10)}.json`;
         a.click();
         URL.revokeObjectURL(url);
     };
 
-    const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
         const text = await file.text();
@@ -54,6 +68,7 @@ export default function ReceiptsList({ onEdit, refreshKey }: ReceiptsListProps) 
     return (
         <div className="card">
             <h2>קבלות קודמות</h2>
+
             <div className="filters-row">
                 <input
                     placeholder="חיפוש לפי לכבוד / מספר קבלה"
@@ -80,59 +95,67 @@ export default function ReceiptsList({ onEdit, refreshKey }: ReceiptsListProps) 
                 </div>
             </div>
 
-            <div className="table-wrapper">
-                <table className="receipts-table">
-                    <thead>
-                    <tr>
-                        <th>מס'</th>
-                        <th>תאריך</th>
-                        <th>לכבוד</th>
-                        <th>סה"כ</th>
-                        <th>נוצר ב</th>
-                        <th>פעולות</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {filtered.length === 0 ? (
+            <div className="receipts-table-wrapper">
+                <div className="table-scroll">
+                    <table className="receipts-table">
+                        <thead>
                         <tr>
-                            <td colSpan={6} style={{ textAlign: "center", padding: 24 }}>
-                                אין קבלות להצגה
-                            </td>
+                            <th>פעולות</th>
+                            <th>מס'</th>
+                            <th>תאריך</th>
+                            <th>לכבוד</th>
+                            <th>סה&quot;כ</th>
+                            <th>נוצר ב</th>
                         </tr>
-                    ) : (
-                        filtered.map((r) => (
-                            <tr key={r.id}>
-                                <td>{r.receiptNumber}</td>
-                                <td>{r.date}</td>
-                                <td>{r.to}</td>
-                                <td>₪ {r.total.toFixed(2)}</td>
-                                <td>{new Date(r.createdAt).toLocaleString("he-IL")}</td>
-                                <td>
-                                    <button
-                                        type="button"
-                                        className="btn-small"
-                                        onClick={() => onEdit(r)}
-                                    >
-                                        עריכה / הדפסה
-                                    </button>
+                        </thead>
+                        <tbody>
+                        {filtered.length === 0 ? (
+                            <tr>
+                                <td colSpan={6} style={{ textAlign: "center", padding: 24 }}>
+                                    אין קבלות להצגה
                                 </td>
                             </tr>
-                        ))
-                    )}
-                    </tbody>
-                </table>
+                        ) : (
+                            filtered.map((r) => (
+                                <tr key={r.id}>
+                                    <td className="actions-cell">
+                                        <button
+                                            type="button"
+                                            className="btn-table"
+                                            onClick={() => onEdit(r)}
+                                        >
+                                            עריכה / הדפסה
+                                        </button>
+                                    </td>
+                                    <td>{r.receiptNumber}</td>
+                                    <td>{formatDateDDMMYYYY(r.date)}</td>
+                                    <td>{r.to}</td>
+                                    <td className="amount-cell">
+                                        {r.total.toFixed(2)} ₪
+                                    </td>
+                                    <td>{new Date(r.createdAt).toLocaleString("he-IL")}</td>
+                                </tr>
+                            ))
+                        )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <div className="backup-row">
                 <div>
                     <h3>גיבוי ושחזור</h3>
                     <p>
-                        כאן אפשר להוריד קובץ JSON עם כל המידע של האתר, ולהעלות אותו במכשיר
-                        אחר כדי להעביר את הקבלות.
+                        כאן אפשר להוריד קובץ JSON עם כל המידע של האתר, ולהעלות אותו
+                        במכשיר אחר כדי להעביר את הקבלות.
                     </p>
                 </div>
                 <div className="backup-actions">
-                    <button type="button" className="btn-outline" onClick={handleDownload}>
+                    <button
+                        type="button"
+                        className="btn-outline"
+                        onClick={handleDownload}
+                    >
                         הורד קובץ JSON
                     </button>
                     <label className="upload-label">
