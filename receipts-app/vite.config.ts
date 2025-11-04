@@ -3,5 +3,5 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
-  base: "/receiptly/", // לשנות לשם הריפו שלך בדיוק!
+  base: "/Receiptly/", // לשנות לשם הריפו שלך בדיוק!
 });
