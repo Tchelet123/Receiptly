@@ -37,7 +37,12 @@ export default function ReceiptPreview({ r }: { r: Receipt }) {
 
             <div style={{ marginTop: 20 }}>
                 <div>חתימה:</div>
-                {r.signerName ? <img src={r.signerName} alt="signature" style={{ width: 240, borderRadius: 8 }} /> : <div style={{ color: '#999' }}>אין חתימה</div>}
+                {r.signatureDataUrl ? (
+                    <img src={r.signatureDataUrl} alt="חתימת העסק" style={{ width: 240, borderRadius: 8 }} />
+                ) : (
+                    <div style={{ color: '#999' }}>אין חתימה</div>
+                )}
+
             </div>
             <div style={{ marginTop: 12 }}>
                 <button onClick={() => { const printWindow = window.open('', '_blank'); if (!printWindow) return; printWindow.document.write('<html><head><title>קבלה</title></head><body>' + document.querySelector('.receipt-preview')!.innerHTML + '</body></html>'); printWindow.document.close(); printWindow.print(); }}>הדפס קבלה</button>

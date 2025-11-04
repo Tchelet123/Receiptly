@@ -37,9 +37,10 @@ function openReceiptWindow(receipt: Receipt) {
     const ownerName = settings.ownerName || "";
     const phone = settings.phone || "";
     const businessNumber = settings.businessNumber || "";
+
     const signature =
         settings.signatureDataUrl ||
-        receipt.signerDataUrl ||
+        receipt.signatureDataUrl ||
         receipt.settingsSnapshot?.signatureDataUrl ||
         "";
 
@@ -305,7 +306,7 @@ function openReceiptWindow(receipt: Receipt) {
               <th style="width: 55%;">פרטים</th>
               <th style="width: 10%;">כמות</th>
               <th style="width: 15%;">מחיר יחידה</th>
-              <th style="width: 20%;">סה"כ שורה</th>
+              <th style="width: 20%;">סה\"כ שורה</th>
             </tr>
           </thead>
           <tbody>
@@ -331,7 +332,7 @@ function openReceiptWindow(receipt: Receipt) {
 
     <div class="total-box">
       <div class="total-pill">
-        <span>סה"כ לתשלום</span>
+        <span>סה\"כ לתשלום</span>
         <span>${receipt.total.toFixed(2)} ₪</span>
       </div>
     </div>
@@ -461,7 +462,7 @@ export default function ReceiptForm({ existingReceipt, onSaved }: ReceiptFormPro
             total,
             createdAt: existingReceipt?.createdAt ?? new Date().toISOString(),
             settingsSnapshot: settings,
-            signerDataUrl: settings.signatureDataUrl ?? null,
+            signatureDataUrl: settings.signatureDataUrl ?? undefined,
         };
 
         let updated: Receipt[];

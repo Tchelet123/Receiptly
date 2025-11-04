@@ -25,5 +25,5 @@ export interface Receipt {
   total: number;
   createdAt: string; // ISO
   settingsSnapshot?: BusinessSettings;
-  signerDataUrl?: string | null;
+  signatureDataUrl?: string;
 }

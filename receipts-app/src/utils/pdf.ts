@@ -12,9 +12,10 @@ export async function generateReceiptPdf(receipt: Receipt) {
     const ownerName = settings.ownerName || "";
     const phone = settings.phone || "";
     const businessNumber = settings.businessNumber || "";
+
     const signature =
         settings.signatureDataUrl ||
-        receipt.signerDataUrl ||
+        receipt.signatureDataUrl ||
         receipt.settingsSnapshot?.signatureDataUrl ||
         "";
 
